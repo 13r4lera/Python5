@@ -1,90 +1,74 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
+
+
 if __name__ == '__main__':
-    # !/usr/bin/env python3
-    # -*- coding: utf-8 -*-
+    school = {}
 
-    import sys
-    from datetime import date
+    while True:
+        command = input(">>> ").lower()
 
-    if __name__ == '__main__':
-        school = {}
+        if command == "exit":
+            break
 
-        while True:
-            command = input(">>> ").lower()
+        elif command == "add":
 
-            if command == "exit":
-                break
+            name = input("Введите цифру и букву класса без пробела: ")
+            amount = int(input("Введите количество учеников: "))
+            school[name] = amount
 
-            elif command == "add":
-                school_class = input("Введите цифру и букву класса без пробела: ")
+            if len(school) > 1:
+                school = dict(sorted(school.items()))
 
-                worker = {
-                    'name': name,
-                    'post': post,
-                    'year': year,
-                }
-
-                workers.append(worker)
-                if len(workers) > 1:
-                    workers.sort(key=lambda item: item.get('name', ''))
-
-            elif command == "list":
-                line = '+-{}-+-{}-+-{}-+-{}-+'.format(
-                    '-' * 4,
-                    '-' * 30,
-                    '-' * 20,
-                    '-' * 8
+        elif command == "list":
+            line = '+-{}-+-{}-+'.format(
+                '-' * 20,
+                '-' * 20
+            )
+            print(line)
+            print(
+                '| {:^20} | {:^20} |'.format(
+                    "Название класса",
+                    "Количество человек"
                 )
-                print(line)
-                print(
-                    '| {:^4} | {:^30} | {:^20} | {:^8} |'.format(
-                        "№",
-                        "Ф.И.О.",
-                        "Должность",
-                        "Год"
-                    )
-                )
-                print(line)
+            )
+            print(line)
 
-                for idx, worker in enumerate(workers, 1):
-                    print(
-                        '| {:>4} | {:<30} | {:<20} | {:>8} |'.format(
-                            idx,
-                            worker.get('name', ''),
-                            worker.get('post', ''),
-                            worker.get('year', '')
-                        )
-                    )
+            for name, amount in school.items():
+                print('| {:^20} | {:^20} |'.format(name, amount))
 
-                print(line)
+            print(line)
 
-            elif command.startswith('select'):
-                today = date.today()
-                parts = command.split(' ', maxsplit=1)
-                period = int(parts[1])
+        elif command == 'help':
+            print("Список команд:\n")
+            print("add - добавить класс;\n")
+            print("list - вывести список классов;\n")
+            print("change класс количество - изменить количество учеников в классе;\n")
+            print("delete класс - расформировать класс;\n")
+            print("help - отобразить справку;\n")
+            print("exit - завершить работу с программой;\n")
 
-                count = 0
-                for worker in workers:
-                    if today.year - worker.get('year', today.year) >= period:
-                        count += 1
-                        print(
-                            '{:>4}: {}'.format(count, worker.get('name', ''))
-                        )
+        elif command.startswith("change"):
+            parts = command.split(' ', maxsplit=2)
+            class_name = parts[1]
+            class_amount = int(parts[2])
 
-                if count == 0:
-                    print("Работники с заднным стажем не найдены. ")
-
-            elif command == 'help':
-                print("Список команд:\n")
-                print("add - добавить работника;\n")
-                print("list - вывести список работников;\n")
-                print("select <стаж> - запросить работников со стажем;\n")
-                print("help - отобразить справку;\n")
-                print("exit - завершить работу с программой;\n")
-
+            if class_name in school:
+                school[class_name] = class_amount
             else:
-                print(f"Неизвестная команда {command}", file=sys.stderr)
+                print("Такого класса нет в школе!", file=sys.stderr)
 
+        elif command.startswith("delete"):
+            parts = command.split(' ', maxsplit=1)
+            class_name = parts[1]
+            if class_name in school:
+                school.pop(class_name)
 
+        elif command == 'total':
+            total_amount = sum(school.values())
+            print(f"Общее количество учеников: {total_amount}")
+
+        else:
+            print(f"Неизвестная команда {command}", file=sys.stderr)
